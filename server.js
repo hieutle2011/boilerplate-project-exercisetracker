@@ -9,6 +9,9 @@ const mongoose = require('mongoose')
 mongoose.connect(process.env.MLAB_URI,
   { useMongoClient: true })
 
+const User = require('./model/myApp').UserModel
+const createUser= require('./model/myApp').createAndSaveUser
+
 app.use(cors())
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -22,9 +25,9 @@ app.get('/', (req, res) => {
 
 
 // Not found middleware
-app.use((req, res, next) => {
-  return next({ status: 404, message: 'not found' })
-})
+// app.use((req, res, next) => {
+//   return next({ status: 404, message: 'not found' })
+// })
 
 // Error Handling middleware
 app.use((err, req, res, next) => {
@@ -43,6 +46,14 @@ app.use((err, req, res, next) => {
   }
   res.status(errCode).type('txt')
     .send(errMessage)
+})
+
+app.post('/api/exercise/new-user', (req, res) => {
+  createUser(req.body.username, (err, data) => {
+    if (err) res.send(err)
+    else if (data === 'User found') res.send('User found!')
+    else res.json({username: data.username, id: data._id})
+  })
 })
 
 const listener = app.listen(process.env.PORT || 3000, () => {
