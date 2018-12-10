@@ -3,13 +3,15 @@ const app = express()
 const bodyParser = require('body-parser')
 
 const cors = require('cors')
+require('dotenv').config()
 
 const mongoose = require('mongoose')
-mongoose.connect(process.env.MLAB_URI || 'mongodb://localhost/exercise-track' )
+mongoose.connect(process.env.MLAB_URI,
+  { useMongoClient: true })
 
 app.use(cors())
 
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 
@@ -21,7 +23,7 @@ app.get('/', (req, res) => {
 
 // Not found middleware
 app.use((req, res, next) => {
-  return next({status: 404, message: 'not found'})
+  return next({ status: 404, message: 'not found' })
 })
 
 // Error Handling middleware
